@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StoryApp</string>
+    <string name="email_error">Email must be in proper format</string>
+    <string name="password_error">Password must consists at least 6 characters</string>
 </resources>
