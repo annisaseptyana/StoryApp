@@ -2,9 +2,11 @@ package com.bangkit.storyapp
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.datastore.core.DataStore
@@ -12,6 +14,11 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.bangkit.storyapp.databinding.ActivityMainBinding
 import androidx.datastore.preferences.core.Preferences
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import retrofit2.Call
+import retrofit2.Response
+import javax.security.auth.callback.Callback
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
 
@@ -27,18 +34,64 @@ class MainActivity : AppCompatActivity() {
         val pref = AppDataStore.getInstance(dataStore)
         val authViewModel = ViewModelProvider(this, ViewModelFactory(pref))[AuthViewModel::class.java]
         authViewModel.loginToken().observe(this) { token: String? ->
-            binding.textView.text = token
-            if (token != null || intent.getStringExtra(TOKEN) != null) {
-                binding.textView.text = token
-            }
-            else {
-                val moveIntent = Intent(this@MainActivity, LoginActivity::class.java)
-                startActivity(moveIntent)
-                finish()
-            }
+            getAllStories(token)
         }
 
-        setupView()
+        if (applicationContext.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            val layoutManager = GridLayoutManager (this, 2)
+            binding.rvStorylist.layoutManager = layoutManager
+        }
+        else {
+            val layoutManager = LinearLayoutManager(this)
+            binding.rvStorylist.layoutManager = layoutManager
+        }
+    }
+
+    private fun getStoryList (listStory: List<ListStoryItem?>?) {
+        val storyList = ArrayList<StoryList>()
+
+        if (listStory != null) {
+            for (item in listStory) {
+                storyList.add (
+                    StoryList(
+                        item?.name,
+                        item?.description,
+                        item?.photoUrl
+                    )
+                )
+            }
+        }
+        val adapter = StoryListAdapter(storyList)
+        binding.rvStorylist.adapter = adapter
+
+    }
+
+    private fun getAllStories (token: String?) {
+        val bearerToken = HashMap<String, String> ()
+        bearerToken["Authorization"] = "Bearer $token"
+
+        val client = ApiConfig.getApiService().getAllStories(bearerToken)
+        client.enqueue(object : Callback, retrofit2.Callback<StoryListResponse> {
+            override fun onResponse(
+                call: Call<StoryListResponse>,
+                response: Response<StoryListResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        getStoryList(responseBody.listStory)
+                    }
+                }
+                else {
+                    Log.e(this@MainActivity.toString(), "onFailure: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<StoryListResponse>, t: Throwable) {
+                Log.e(this@MainActivity.toString(), "onFailure: ${t.message}")
+            }
+
+        })
     }
 
     private fun setupView() {
