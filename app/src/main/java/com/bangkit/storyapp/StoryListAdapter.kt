@@ -30,7 +30,12 @@ class StoryListAdapter (private val listStory: ArrayList<StoryList>) : RecyclerV
             .into(holder.imagePhoto)
         holder.textName.text = name
         holder.imagePhoto.setOnClickListener {
-            // click on picture -> details -> description
+            val moveIntent = Intent(holder.itemView.context, DetailActivity::class.java)
+            moveIntent.putExtra(DetailActivity.PHOTO_URL, photoUrl)
+            moveIntent.putExtra(DetailActivity.NAME, name)
+            moveIntent.putExtra(DetailActivity.DESCRIPTION, description)
+
+            holder.itemView.context.startActivity(moveIntent)
         }
     }
 

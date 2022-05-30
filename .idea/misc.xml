@@ -4,10 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/ANNISA/AndroidStudioProjects/StoryApp/app/src/main/res/drawable/ic_email.xml" value="0.1" />
+        <entry key="..\:/Users/ANNISA/AndroidStudioProjects/StoryApp/app/src/main/res/layout/activity_detail.xml" value="0.1" />
         <entry key="..\:/Users/ANNISA/AndroidStudioProjects/StoryApp/app/src/main/res/layout/activity_login.xml" value="0.22" />
         <entry key="..\:/Users/ANNISA/AndroidStudioProjects/StoryApp/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/ANNISA/AndroidStudioProjects/StoryApp/app/src/main/res/layout/activity_register.xml" value="0.1" />
-        <entry key="..\:/Users/ANNISA/AndroidStudioProjects/StoryApp/app/src/main/res/layout/item_story_list.xml" value="0.22" />
+        <entry key="..\:/Users/ANNISA/AndroidStudioProjects/StoryApp/app/src/main/res/layout/item_story_list.xml" value="0.1" />
+        <entry key="..\:/Users/ANNISA/AndroidStudioProjects/StoryApp/app/src/main/res/menu/option_menu.xml" value="0.22" />
       </map>
     </option>
   </component>
