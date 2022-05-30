@@ -49,6 +49,7 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
         binding.signupButton.setOnClickListener {
+            // add ProgressBar
             if(registerValidation()) {
                 val client = ApiConfig.getApiService().register(name, email, password)
                 client.enqueue(object : Callback,
@@ -58,15 +59,32 @@ class RegisterActivity : AppCompatActivity() {
                         response: Response<RegisterResponse>
                     ) {
                         if (response.isSuccessful) {
-                            Toast.makeText(this@RegisterActivity, "Registrasi Berhasil", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@RegisterActivity,
+                                response.body()?.message ?: "Account Created",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            val moveIntent = Intent(this@RegisterActivity, LoginActivity::class.java)
+                            startActivity(moveIntent)
+                            finish()
+
                         } else {
-                            Toast.makeText(this@RegisterActivity, "Registrasi Gagal", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@RegisterActivity,
+                                response.body()?.message ?: "Failed Creating Account",
+                                Toast.LENGTH_SHORT
+                            ).show()
                             Log.e(TAG, "onFailure: ${response.message()}")
                         }
                     }
 
                     override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
-                        Toast.makeText(this@RegisterActivity, "Registrasi Gagal", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@RegisterActivity,
+                            "Failed Creating Account",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         Log.e(TAG, "onFailure: ${t.message}")
                     }
                 })
@@ -83,12 +101,15 @@ class RegisterActivity : AppCompatActivity() {
             when {
                 name.isEmpty() -> {
                     isValid = false
+                    nameEditText.error = resources.getString(R.string.name_empty)
                 }
                 email.isEmpty() -> {
                     isValid = false
+                    emailEditText.error = resources.getString(R.string.email_empty)
                 }
                 password.isEmpty() -> {
                     isValid = false
+                    passwordEditText.error = resources.getString(R.string.password_empty)
                 }
                 else -> {
                     isValid = true

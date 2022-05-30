@@ -2,4 +2,7 @@
     <string name="app_name">StoryApp</string>
     <string name="email_error">Email must be in proper format</string>
     <string name="password_error">Password must consists at least 6 characters</string>
+    <string name="name_empty">Please input your name</string>
+    <string name="email_empty">Please input your email</string>
+    <string name="password_empty">Please input your password</string>
 </resources>

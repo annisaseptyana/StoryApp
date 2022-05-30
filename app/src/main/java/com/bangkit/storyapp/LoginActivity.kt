@@ -1,6 +1,8 @@
 package com.bangkit.storyapp
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -9,10 +11,16 @@ import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.ViewModelProvider
 import com.bangkit.storyapp.databinding.ActivityLoginBinding
 import retrofit2.Call
 import retrofit2.Response
 import javax.security.auth.callback.Callback
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
 
 class LoginActivity : AppCompatActivity() {
 
@@ -26,8 +34,11 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val pref = AppDataStore.getInstance(dataStore)
+        val authViewModel = ViewModelProvider(this, ViewModelFactory(pref))[AuthViewModel::class.java]
+
         setupView()
-        setupAction()
+        setupAction(authViewModel)
     }
 
     private fun setupView() {
@@ -43,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
         supportActionBar?.hide()
     }
 
-    private fun setupAction() {
+    private fun setupAction(authViewModel: AuthViewModel) {
         binding.btnRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
@@ -57,18 +68,39 @@ class LoginActivity : AppCompatActivity() {
                         response: Response<LoginResponse>
                     ) {
                         if (response.isSuccessful) {
-                            Toast.makeText(this@LoginActivity, "Login Berhasil", Toast.LENGTH_SHORT).show()
+                            val tokenLogin = response.body()?.loginResult?.token
+                            tokenLogin?.let { token ->
+                                authViewModel.saveToken(token)
+                            }
+                            Toast.makeText(
+                                this@LoginActivity,
+                                "Selamat datang, ${response.body()?.loginResult?.name
+                                }",
+                                Toast.LENGTH_SHORT
+                            ).show()
+
+                            val moveIntent = Intent(this@LoginActivity, MainActivity::class.java)
+                            moveIntent.putExtra(MainActivity.TOKEN, tokenLogin)
+                            startActivity(moveIntent)
+
                         } else {
-                            Toast.makeText(this@LoginActivity, "Login tidak berhasil", Toast.LENGTH_SHORT).show()
-                            Log.e(ContentValues.TAG, "onFailure: ${response.message()}")
+                            Toast.makeText(
+                                this@LoginActivity,
+                                response.body()?.message ?: "Login Failed",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Log.e(TAG, "onFailure: ${response.message()}")
                         }
                     }
 
                     override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                        Toast.makeText(this@LoginActivity, "Login Gagal", Toast.LENGTH_SHORT).show()
-                        Log.e(ContentValues.TAG, "onFailure: ${t.message}")
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Login Failed",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        Log.e(TAG, "onFailure: ${t.message}")
                     }
-
                 })
             }
         }
@@ -82,12 +114,12 @@ class LoginActivity : AppCompatActivity() {
 
             when {
                 email.isEmpty() -> {
-                    //emailEditText.error = resources.getString(R.string.title_register_activity_layout_2)
                     isValid = false
+                    emailEditText.error = resources.getString(R.string.email_empty)
                 }
                 password.isEmpty() -> {
-                    //passwordEditText.error = resources.getString(R.string.title_register_activity_layout_3)
                     isValid = false
+                    passwordEditText.error = resources.getString(R.string.password_empty)
                 }
                 else -> {
                     isValid = true
