@@ -1,4 +1,4 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -18,6 +18,12 @@ class AppDataStore private constructor(private val dataStore: DataStore<Preferen
     suspend fun saveToken(token: String) {
         dataStore.edit { preferences ->
             preferences[LOGIN_TOKEN] = token
+        }
+    }
+
+    suspend fun clearToken() {
+        dataStore.edit { preferences ->
+            preferences.clear()
         }
     }
 

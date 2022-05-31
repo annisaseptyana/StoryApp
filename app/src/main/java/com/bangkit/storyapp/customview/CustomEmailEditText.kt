@@ -1,4 +1,4 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.customview
 
 import android.content.Context
 import android.graphics.Canvas
@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
+import com.bangkit.storyapp.R
 
 class CustomEmailEditText : AppCompatEditText{
     constructor(context: Context) : super(context)

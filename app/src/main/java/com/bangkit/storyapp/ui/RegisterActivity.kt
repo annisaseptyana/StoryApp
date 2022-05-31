@@ -1,8 +1,6 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.ui
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -11,34 +9,29 @@ import android.util.Log
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.ViewModelProvider
-import com.bangkit.storyapp.databinding.ActivityLoginBinding
+import com.bangkit.storyapp.api.ApiConfig
+import com.bangkit.storyapp.R
+import com.bangkit.storyapp.api.RegisterResponse
+import com.bangkit.storyapp.databinding.ActivityRegisterBinding
 import retrofit2.Call
-import retrofit2.Response
 import javax.security.auth.callback.Callback
+import retrofit2.Response
 
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
+class RegisterActivity : AppCompatActivity() {
 
-class LoginActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityRegisterBinding
 
-    private lateinit var binding: ActivityLoginBinding
-
+    private lateinit var name: String
     private lateinit var email: String
     private lateinit var password: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val pref = AppDataStore.getInstance(dataStore)
-        val authViewModel = ViewModelProvider(this, ViewModelFactory(pref))[AuthViewModel::class.java]
-
         setupView()
-        setupAction(authViewModel)
+        setupAction()
     }
 
     private fun setupView() {
@@ -54,49 +47,45 @@ class LoginActivity : AppCompatActivity() {
         supportActionBar?.hide()
     }
 
-    private fun setupAction(authViewModel: AuthViewModel) {
-        binding.btnRegister.setOnClickListener {
-            startActivity(Intent(this, RegisterActivity::class.java))
+    private fun setupAction() {
+        binding.btnLogin.setOnClickListener {
+            startActivity(Intent(this, LoginActivity::class.java))
         }
-        binding.loginButton.setOnClickListener {
-            if(loginValidation()) {
-                val client = ApiConfig.getApiService().login(email, password)
+        binding.signupButton.setOnClickListener {
+            // add ProgressBar
+            if(registerValidation()) {
+                val client = ApiConfig.getApiService().register(name, email, password)
                 client.enqueue(object : Callback,
-                    retrofit2.Callback<LoginResponse> {
+                    retrofit2.Callback<RegisterResponse> {
                     override fun onResponse(
-                        call: Call<LoginResponse>,
-                        response: Response<LoginResponse>
+                        call: Call<RegisterResponse>,
+                        response: Response<RegisterResponse>
                     ) {
                         if (response.isSuccessful) {
-                            val tokenLogin = response.body()?.loginResult?.token
-                            tokenLogin?.let { token ->
-                                authViewModel.saveToken(token)
-                            }
                             Toast.makeText(
-                                this@LoginActivity,
-                                "Selamat datang, ${response.body()?.loginResult?.name
-                                }",
+                                this@RegisterActivity,
+                                response.body()?.message ?: "Account Created",
                                 Toast.LENGTH_SHORT
                             ).show()
 
-                            val moveIntent = Intent(this@LoginActivity, MainActivity::class.java)
-                            moveIntent.putExtra(MainActivity.TOKEN, tokenLogin)
+                            val moveIntent = Intent(this@RegisterActivity, LoginActivity::class.java)
                             startActivity(moveIntent)
+                            finish()
 
                         } else {
                             Toast.makeText(
-                                this@LoginActivity,
-                                response.body()?.message ?: "Login Failed",
+                                this@RegisterActivity,
+                                response.body()?.message ?: "Failed Creating Account",
                                 Toast.LENGTH_SHORT
                             ).show()
                             Log.e(TAG, "onFailure: ${response.message()}")
                         }
                     }
 
-                    override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
+                    override fun onFailure(call: Call<RegisterResponse>, t: Throwable) {
                         Toast.makeText(
-                            this@LoginActivity,
-                            "Login Failed",
+                            this@RegisterActivity,
+                            "Failed Creating Account",
                             Toast.LENGTH_SHORT
                         ).show()
                         Log.e(TAG, "onFailure: ${t.message}")
@@ -105,14 +94,18 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun loginValidation(): Boolean {
+    private fun registerValidation(): Boolean {
         with(binding) {
+            name = nameEditText.text?.toString()?.trim()!!
             email = emailEditText.text?.toString()?.trim()!!
             password = passwordEditText.text?.toString()?.trim()!!
             val isValid: Boolean
 
             when {
+                name.isEmpty() -> {
+                    isValid = false
+                    nameEditText.error = resources.getString(R.string.name_empty)
+                }
                 email.isEmpty() -> {
                     isValid = false
                     emailEditText.error = resources.getString(R.string.email_empty)

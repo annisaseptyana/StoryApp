@@ -1,4 +1,4 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.datastore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

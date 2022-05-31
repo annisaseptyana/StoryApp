@@ -1,4 +1,4 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.ui
 
 import android.content.Context
 import android.content.Intent
@@ -7,6 +7,8 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.datastore.core.DataStore
@@ -16,6 +18,13 @@ import com.bangkit.storyapp.databinding.ActivityMainBinding
 import androidx.datastore.preferences.core.Preferences
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bangkit.storyapp.ListStoryItem
+import com.bangkit.storyapp.R
+import com.bangkit.storyapp.StoryListResponse
+import com.bangkit.storyapp.api.ApiConfig
+import com.bangkit.storyapp.datastore.AppDataStore
+import com.bangkit.storyapp.datastore.AuthViewModel
+import com.bangkit.storyapp.datastore.ViewModelFactory
 import retrofit2.Call
 import retrofit2.Response
 import javax.security.auth.callback.Callback
@@ -92,6 +101,34 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.option_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.create_story -> {
+                val intent = Intent(this@MainActivity, AddStoryActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+            R.id.logout -> {
+                val pref = AppDataStore.getInstance(dataStore)
+                val authViewModel = ViewModelProvider(
+                    this@MainActivity,
+                    ViewModelFactory(pref)
+                )[AuthViewModel::class.java]
+                authViewModel.clearToken()
+                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                finish()
+                return true
+            }
+            else -> return true
+        }
     }
 
     private fun setupView() {

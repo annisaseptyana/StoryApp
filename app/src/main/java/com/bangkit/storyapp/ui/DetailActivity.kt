@@ -1,4 +1,4 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.datastore
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -14,6 +14,12 @@ class AuthViewModel(private val pref: AppDataStore) : ViewModel() {
     fun saveToken(token: String) {
         viewModelScope.launch {
             pref.saveToken(token)
+        }
+    }
+
+    fun clearToken() {
+        viewModelScope.launch {
+            pref.clearToken()
         }
     }
 }

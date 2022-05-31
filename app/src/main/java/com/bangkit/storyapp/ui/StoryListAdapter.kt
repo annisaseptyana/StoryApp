@@ -1,4 +1,4 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.ui
 
 import android.content.Intent
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bangkit.storyapp.R
 import com.bumptech.glide.Glide
 
 class StoryListAdapter (private val listStory: ArrayList<StoryList>) : RecyclerView.Adapter<StoryListAdapter.ListViewHolder>() {
