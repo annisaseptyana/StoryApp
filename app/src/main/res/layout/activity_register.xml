@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    tools:context=".ui.RegisterActivity">
 
     <ImageView
         android:id="@+id/imageview_header"
@@ -89,7 +89,7 @@
         app:layout_constraintTop_toBottomOf="@+id/emailTextView"
         app:startIconDrawable="@drawable/ic_email">
 
-        <com.bangkit.storyapp.CustomEmailEditText
+        <com.bangkit.storyapp.customview.CustomEmailEditText
             android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,7 +121,7 @@
         app:passwordToggleEnabled="true"
         app:startIconDrawable="@drawable/ic_lock">
 
-        <com.bangkit.storyapp.CustomPasswordEditText
+        <com.bangkit.storyapp.customview.CustomPasswordEditText
             android:id="@+id/passwordEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

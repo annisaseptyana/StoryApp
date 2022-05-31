@@ -6,4 +6,6 @@
     <string name="email_empty">Please input your email</string>
     <string name="password_empty">Please input your password</string>
     <string name="create_story">Create Story</string>
+    <string name="story_empty">Please upload a picture and fill in the caption</string>
+    <string name="logout">Logout</string>
 </resources>
