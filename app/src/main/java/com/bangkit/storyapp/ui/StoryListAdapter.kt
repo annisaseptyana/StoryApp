@@ -1,11 +1,14 @@
 package com.bangkit.storyapp.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.util.Pair
 import androidx.recyclerview.widget.RecyclerView
 import com.bangkit.storyapp.R
 import com.bumptech.glide.Glide
@@ -36,7 +39,13 @@ class StoryListAdapter (private val listStory: ArrayList<StoryList>) : RecyclerV
             moveIntent.putExtra(DetailActivity.NAME, name)
             moveIntent.putExtra(DetailActivity.DESCRIPTION, description)
 
-            holder.itemView.context.startActivity(moveIntent)
+            val optionCompat: ActivityOptionsCompat =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    holder.itemView.context as Activity,
+                    Pair(holder.imagePhoto, "image"),
+                    Pair(holder.textName, "name")
+                )
+            holder.itemView.context.startActivity(moveIntent, optionCompat.toBundle())
         }
     }
 
