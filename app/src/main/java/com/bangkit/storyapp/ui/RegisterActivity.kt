@@ -6,6 +6,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
@@ -52,7 +53,7 @@ class RegisterActivity : AppCompatActivity() {
             startActivity(Intent(this, LoginActivity::class.java))
         }
         binding.signupButton.setOnClickListener {
-            // add ProgressBar
+            showLoading(true)
             if(registerValidation()) {
                 val client = ApiConfig.getApiService().register(name, email, password)
                 client.enqueue(object : Callback,
@@ -61,6 +62,7 @@ class RegisterActivity : AppCompatActivity() {
                         call: Call<RegisterResponse>,
                         response: Response<RegisterResponse>
                     ) {
+                        showLoading(false)
                         if (response.isSuccessful) {
                             Toast.makeText(
                                 this@RegisterActivity,
@@ -119,6 +121,14 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
             return isValid
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
         }
     }
 }

@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -103,6 +104,7 @@ class AddStoryActivity : AppCompatActivity() {
     }
 
     private fun uploadFile() {
+        showLoading(true)
         val descriptionValue = binding.editDesc.text?.toString()?.trim()
         if (attachFile != null && descriptionValue!!.isNotEmpty()) {
             val file = attachFile as File
@@ -126,6 +128,7 @@ class AddStoryActivity : AppCompatActivity() {
                         call: Call<AddStoryResponse>,
                         response: Response<AddStoryResponse>
                     ) {
+                        showLoading(false)
                         if (response.isSuccessful) {
                             val responseBody = response.body()
                             Toast.makeText(
@@ -149,11 +152,20 @@ class AddStoryActivity : AppCompatActivity() {
                 })
             }
         } else {
+            showLoading(false)
             Toast.makeText(
                 this@AddStoryActivity,
                 getString(R.string.story_empty),
                 Toast.LENGTH_SHORT
             ).show()
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
         }
     }
 }

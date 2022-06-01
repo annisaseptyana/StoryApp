@@ -1,6 +1,5 @@
 package com.bangkit.storyapp.ui
 
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
@@ -8,6 +7,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
@@ -65,6 +65,7 @@ class LoginActivity : AppCompatActivity() {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
         binding.loginButton.setOnClickListener {
+            showLoading(true)
             if(loginValidation()) {
                 val client = ApiConfig.getApiService().login(email, password)
                 client.enqueue(object : Callback,
@@ -73,6 +74,7 @@ class LoginActivity : AppCompatActivity() {
                         call: Call<LoginResponse>,
                         response: Response<LoginResponse>
                     ) {
+                        showLoading(false)
                         if (response.isSuccessful) {
                             val tokenLogin = response.body()?.loginResult?.token
                             tokenLogin?.let { token ->
@@ -132,6 +134,14 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
             return isValid
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
         }
     }
 }
