@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddStoryActivity">
+    android:background="@color/white"
+    tools:context=".ui.AddStoryActivity">
 
     <ImageView
         android:id="@+id/previewImageView"
@@ -22,20 +23,32 @@
     <Button
         android:id="@+id/button_camera"
         android:layout_width="180dp"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_marginHorizontal="8dp"
-        android:text="Camera"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/navy"
+        android:text="CAMERA"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="100dp"
         app:layout_constraintBottom_toTopOf="@+id/text_desc"
-        app:layout_constraintStart_toStartOf="@+id/text_desc" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/button_gallery"
         android:layout_width="180dp"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:layout_marginHorizontal="0dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/navy"
         android:text="Gallery"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:cornerRadius="100dp"
         app:layout_constraintBottom_toTopOf="@+id/text_desc"
-        app:layout_constraintEnd_toEndOf="@+id/text_desc" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/text_desc"
@@ -43,6 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
         android:paddingStart="8dp"
         android:text="Caption"
         android:textSize="18sp"
@@ -63,14 +77,30 @@
 
     <Button
         android:id="@+id/button_upload"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:backgroundTint="@color/navy"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="24dp"
         android:text="Upload"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        app:cornerRadius="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

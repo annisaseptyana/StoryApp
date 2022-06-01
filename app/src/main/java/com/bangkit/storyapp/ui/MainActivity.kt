@@ -7,10 +7,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.WindowInsets
-import android.view.WindowManager
+import android.view.*
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
@@ -76,6 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getAllStories (token: String?) {
+        showLoading(true)
         val bearerToken = HashMap<String, String> ()
         bearerToken["Authorization"] = "Bearer $token"
 
@@ -85,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                 call: Call<StoryListResponse>,
                 response: Response<StoryListResponse>
             ) {
+                showLoading(false)
                 if (response.isSuccessful) {
                     val responseBody = response.body()
                     if (responseBody != null) {
@@ -146,5 +145,13 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val TOKEN = "token"
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBar.visibility = View.VISIBLE
+        } else {
+            binding.progressBar.visibility = View.GONE
+        }
     }
 }

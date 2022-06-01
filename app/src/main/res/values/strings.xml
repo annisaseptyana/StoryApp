@@ -8,4 +8,6 @@
     <string name="create_story">Create Story</string>
     <string name="story_empty">Please upload a picture and fill in the caption</string>
     <string name="logout">Logout</string>
+    <string name="content_description">Uploaded Image</string>
+    <string name="user_name">User Name</string>
 </resources>
