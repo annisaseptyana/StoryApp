@@ -36,7 +36,6 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-
     private lateinit var email: String
     private lateinit var password: String
 

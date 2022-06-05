@@ -8,7 +8,6 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface ApiService {
-    // Register
     @FormUrlEncoded
     @POST("register")
     fun register (
@@ -17,7 +16,6 @@ interface ApiService {
         @Field("password") password: String
     ): Call<RegisterResponse>
 
-    // Login
     @FormUrlEncoded
     @POST("login")
     fun login (
@@ -25,13 +23,11 @@ interface ApiService {
         @Field("password") password: String
     ): Call<LoginResponse>
 
-    // Story List
     @GET("stories")
     fun getAllStories(
         @HeaderMap token: Map<String, String>
     ): Call<StoryListResponse>
 
-    // Add Story
     @Multipart
     @POST("stories")
     fun addNewStory(

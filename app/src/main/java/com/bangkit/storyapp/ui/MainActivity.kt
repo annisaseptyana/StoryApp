@@ -15,9 +15,7 @@ import com.bangkit.storyapp.databinding.ActivityMainBinding
 import androidx.datastore.preferences.core.Preferences
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bangkit.storyapp.ListStoryItem
-import com.bangkit.storyapp.R
-import com.bangkit.storyapp.StoryListResponse
+import com.bangkit.storyapp.*
 import com.bangkit.storyapp.api.ApiConfig
 import com.bangkit.storyapp.datastore.AppDataStore
 import com.bangkit.storyapp.datastore.AuthViewModel
@@ -37,12 +35,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val pref = AppDataStore.getInstance(dataStore)
-        val authViewModel = ViewModelProvider(this, ViewModelFactory(pref))[AuthViewModel::class.java]
-        authViewModel.loginToken().observe(this) { token: String? ->
-            getAllStories(token)
-        }
-
         if (applicationContext.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             val layoutManager = GridLayoutManager (this, 2)
             binding.rvStorylist.layoutManager = layoutManager
@@ -51,6 +43,9 @@ class MainActivity : AppCompatActivity() {
             val layoutManager = LinearLayoutManager(this)
             binding.rvStorylist.layoutManager = layoutManager
         }
+
+        setupView()
+        setupAction()
     }
 
     private fun getStoryList (listStory: List<ListStoryItem?>?) {
@@ -141,6 +136,23 @@ class MainActivity : AppCompatActivity() {
             )
         }
         supportActionBar?.hide()
+    }
+
+    private fun setupAction() {
+        val pref = AppDataStore.getInstance(dataStore)
+        val authViewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(pref)
+        )[AuthViewModel::class.java]
+        authViewModel.loginToken().observe(this) { token: String? ->
+            if(token != null) {
+                getAllStories(token)
+            }
+            else {
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+        }
     }
 
     companion object {
