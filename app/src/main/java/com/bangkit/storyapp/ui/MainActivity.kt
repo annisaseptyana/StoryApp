@@ -35,6 +35,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val pref = AppDataStore.getInstance(dataStore)
+        val authViewModel = ViewModelProvider(
+            this,
+            ViewModelFactory(pref)
+        )[AuthViewModel::class.java]
+
+        authViewModel.loginToken().observe(this) { token: String? ->
+            if(token != null) {
+                getAllStories(token)
+            }
+            else {
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+        }
+
         if (applicationContext.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             val layoutManager = GridLayoutManager (this, 2)
             binding.rvStorylist.layoutManager = layoutManager
@@ -43,9 +59,6 @@ class MainActivity : AppCompatActivity() {
             val layoutManager = LinearLayoutManager(this)
             binding.rvStorylist.layoutManager = layoutManager
         }
-
-        setupView()
-        setupAction()
     }
 
     private fun getStoryList (listStory: List<ListStoryItem?>?) {
@@ -122,36 +135,6 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             else -> return true
-        }
-    }
-
-    private fun setupView() {
-        @Suppress("DEPRECATION")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
-        } else {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        }
-        supportActionBar?.hide()
-    }
-
-    private fun setupAction() {
-        val pref = AppDataStore.getInstance(dataStore)
-        val authViewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(pref)
-        )[AuthViewModel::class.java]
-        authViewModel.loginToken().observe(this) { token: String? ->
-            if(token != null) {
-                getAllStories(token)
-            }
-            else {
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
-            }
         }
     }
 
