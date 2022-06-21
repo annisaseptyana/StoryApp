@@ -3,26 +3,22 @@ package com.bangkit.storyapp.ui
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import androidx.activity.viewModels
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.bangkit.storyapp.databinding.ActivityMainBinding
 import androidx.datastore.preferences.core.Preferences
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bangkit.storyapp.*
-import com.bangkit.storyapp.api.ApiConfig
 import com.bangkit.storyapp.datastore.AppDataStore
 import com.bangkit.storyapp.datastore.AuthViewModel
 import com.bangkit.storyapp.datastore.ViewModelFactory
-import retrofit2.Call
-import retrofit2.Response
-import javax.security.auth.callback.Callback
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
 
@@ -36,15 +32,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val pref = AppDataStore.getInstance(dataStore)
-        val authViewModel = ViewModelProvider(
-            this,
-            ViewModelFactory(pref)
-        )[AuthViewModel::class.java]
+        val authViewModel = ViewModelProvider(this, ViewModelFactory(pref))[AuthViewModel::class.java]
 
         authViewModel.loginToken().observe(this) { token: String? ->
+
             if(token != null) {
-                getAllStories(token)
+                showLoading(true)
+                val loginToken = "Bearer $token"
+                val mainViewModel: StoryViewModel by viewModels {
+                    ViewModelFactory(loginToken, this@MainActivity)
+                }
+                val adapter = StoryListAdapter()
+                mainViewModel.stories.observe(this) {
+                    adapter.submitData(lifecycle, it)
+                }
+                binding.rvStorylist.adapter = adapter
+                showLoading(false)
             }
+
             else {
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
@@ -61,74 +66,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getStoryList (listStory: List<ListStoryItem?>?) {
-        val storyList = ArrayList<StoryList>()
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
 
-        if (listStory != null) {
-            for (item in listStory) {
-                storyList.add (
-                    StoryList(
-                        item?.name,
-                        item?.description,
-                        item?.photoUrl
-                    )
-                )
-            }
-        }
-        val adapter = StoryListAdapter(storyList)
-        binding.rvStorylist.adapter = adapter
-
-    }
-
-    private fun getAllStories (token: String?) {
-        showLoading(true)
-        val bearerToken = HashMap<String, String> ()
-        bearerToken["Authorization"] = "Bearer $token"
-
-        val client = ApiConfig.getApiService().getAllStories(bearerToken)
-        client.enqueue(object : Callback, retrofit2.Callback<StoryListResponse> {
-            override fun onResponse(
-                call: Call<StoryListResponse>,
-                response: Response<StoryListResponse>
-            ) {
-                showLoading(false)
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        getStoryList(responseBody.listStory)
-                    }
-                }
-                else {
-                    Log.e(this@MainActivity.toString(), "onFailure: ${response.message()}")
-                }
-            }
-
-            override fun onFailure(call: Call<StoryListResponse>, t: Throwable) {
-                Log.e(this@MainActivity.toString(), "onFailure: ${t.message}")
-            }
-
-        })
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.option_menu, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
         when (item.itemId) {
+
             R.id.create_story -> {
                 val intent = Intent(this@MainActivity, AddStoryActivity::class.java)
                 startActivity(intent)
                 return true
             }
+
             R.id.logout -> {
                 val pref = AppDataStore.getInstance(dataStore)
-                val authViewModel = ViewModelProvider(
-                    this@MainActivity,
-                    ViewModelFactory(pref)
-                )[AuthViewModel::class.java]
+                val authViewModel = ViewModelProvider(this@MainActivity, ViewModelFactory(pref))[AuthViewModel::class.java]
                 authViewModel.clearToken()
                 startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                 finish()
@@ -139,10 +96,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
+
         const val TOKEN = "token"
     }
 
     private fun showLoading(isLoading: Boolean) {
+
         if (isLoading) {
             binding.progressBar.visibility = View.VISIBLE
         } else {

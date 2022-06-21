@@ -3,52 +3,69 @@ package com.bangkit.storyapp.ui
 import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.util.Pair
+import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bangkit.storyapp.R
+import com.bangkit.storyapp.ListStoryItem
+import com.bangkit.storyapp.databinding.ItemStoryListBinding
 import com.bumptech.glide.Glide
 
-class StoryListAdapter (private val listStory: ArrayList<StoryList>) : RecyclerView.Adapter<StoryListAdapter.ListViewHolder>() {
-    class ListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var imagePhoto: ImageView = itemView.findViewById(R.id.image_photo)
-        var textName: TextView = itemView.findViewById(R.id.text_name)
-    }
+class StoryListAdapter: PagingDataAdapter<ListStoryItem, StoryListAdapter.ListViewHolder>(DIFF_CALLBACK) {
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): ListViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_story_list, parent, false)
-        return ListViewHolder(view)
-    }
+    class ListViewHolder(private var binding: ItemStoryListBinding): RecyclerView.ViewHolder(binding.root){
 
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val (name, description, photoUrl) = listStory[position]
-        Glide.with(holder.imagePhoto.context)
-            .load(photoUrl)
-            .into(holder.imagePhoto)
-        holder.textName.text = name
-        holder.imagePhoto.setOnClickListener {
-            val moveIntent = Intent(holder.itemView.context, DetailActivity::class.java)
-            moveIntent.putExtra(DetailActivity.PHOTO_URL, photoUrl)
-            moveIntent.putExtra(DetailActivity.NAME, name)
-            moveIntent.putExtra(DetailActivity.DESCRIPTION, description)
+        fun bind(data: ListStoryItem) {
 
-            val optionCompat: ActivityOptionsCompat =
-                ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    holder.itemView.context as Activity,
-                    Pair(holder.imagePhoto, "image"),
-                    Pair(holder.textName, "name")
-                )
-            holder.itemView.context.startActivity(moveIntent, optionCompat.toBundle())
+            with(binding) {
+                Glide.with(imagePhoto.context)
+                    .load(data.photoUrl)
+                    .into(imagePhoto)
+                textName.text = data.name
+                imagePhoto.setOnClickListener {
+
+                    val moveIntent = Intent(itemView.context, DetailActivity::class.java)
+                    moveIntent.putExtra(DetailActivity.PHOTO_URL, data.photoUrl)
+                    moveIntent.putExtra(DetailActivity.NAME, data.name)
+                    moveIntent.putExtra(DetailActivity.DESCRIPTION, data.description)
+
+                    val optionCompat: ActivityOptionsCompat =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(
+                            itemView.context as Activity,
+                            Pair(imagePhoto, "image"),
+                            Pair(textName, "name")
+                        )
+
+                    itemView.context.startActivity(moveIntent, optionCompat.toBundle())
+                }
+            }
         }
     }
 
-    override fun getItemCount(): Int = listStory.size
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
+        val binding = ItemStoryListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ListViewHolder(binding)
+    }
 
+    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
+        val data = getItem(position)
+        if (data != null) {
+            holder.bind(data)
+        }
+    }
+
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ListStoryItem>() {
+
+            override fun areContentsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areItemsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 }
