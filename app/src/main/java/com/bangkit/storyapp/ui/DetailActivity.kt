@@ -27,8 +27,8 @@ class DetailActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val PHOTO_URL = "photoUrl"
-        const val NAME = "name"
-        const val DESCRIPTION = "description"
+        var PHOTO_URL: String? = "photoUrl"
+        var NAME: String? = "name"
+        var DESCRIPTION: String? = "description"
     }
 }

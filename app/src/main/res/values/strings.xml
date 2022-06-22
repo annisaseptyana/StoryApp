@@ -10,4 +10,6 @@
     <string name="logout">Logout</string>
     <string name="content_description">Uploaded Image</string>
     <string name="user_name">User Name</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="locate_user">Locate User</string>
 </resources>

@@ -2,6 +2,7 @@ package com.bangkit.storyapp.api
 
 import com.bangkit.storyapp.ListStoryItem
 import com.bangkit.storyapp.LoginResponse
+import com.bangkit.storyapp.StoryListResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -29,6 +30,12 @@ interface ApiService {
         @Query("page") page: Int,
         @Query("size") size: Int
     ): List<ListStoryItem>
+
+    @GET("stories")
+    fun getLocation(
+        @HeaderMap token: Map<String, String>,
+        @Query("location") location: Int = 1
+    ): Call<StoryListResponse>
 
     @Multipart
     @POST("stories")

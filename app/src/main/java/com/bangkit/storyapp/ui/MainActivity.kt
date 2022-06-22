@@ -83,6 +83,12 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
 
+            R.id.view_maps -> {
+                val intent = Intent(this@MainActivity, MapsActivity::class.java)
+                startActivity(intent)
+                return true
+            }
+
             R.id.logout -> {
                 val pref = AppDataStore.getInstance(dataStore)
                 val authViewModel = ViewModelProvider(this@MainActivity, ViewModelFactory(pref))[AuthViewModel::class.java]
