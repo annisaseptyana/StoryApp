@@ -20,13 +20,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
-import com.bangkit.storyapp.LoginResponse
+import com.bangkit.storyapp.response.LoginResponse
 import com.bangkit.storyapp.R
 import com.bangkit.storyapp.api.ApiConfig
 import com.bangkit.storyapp.databinding.ActivityLoginBinding
-import com.bangkit.storyapp.datastore.AppDataStore
-import com.bangkit.storyapp.datastore.AuthViewModel
-import com.bangkit.storyapp.datastore.ViewModelFactory
+import com.bangkit.storyapp.data.AppDataStore
+import com.bangkit.storyapp.data.AuthViewModel
+import com.bangkit.storyapp.data.ViewModelFactory
 import retrofit2.Call
 import retrofit2.Response
 import javax.security.auth.callback.Callback

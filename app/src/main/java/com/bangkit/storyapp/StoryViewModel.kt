@@ -1,27 +1,31 @@
 package com.bangkit.storyapp
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.bangkit.storyapp.data.StoryRepository
+import com.bangkit.storyapp.response.StoryListResponseItem
 import java.lang.IllegalArgumentException
 
-class StoryViewModel(storyRepository: StoryRepository): ViewModel() {
+class StoryViewModel(private val storyRepository: StoryRepository): ViewModel() {
+    private val _stories = MutableLiveData<PagingData<StoryListResponseItem>>()
 
-    val stories: LiveData<PagingData<ListStoryItem>> = storyRepository.getStory().cachedIn(viewModelScope)
+    fun stories(token: String): LiveData<PagingData<StoryListResponseItem>> {
+        val response = storyRepository.getStory(token).cachedIn(viewModelScope)
+        _stories.value = response.value
+        return response
+    }
 }
 
-class ViewModelFactory(private val token: String, private val context: Context): ViewModelProvider.Factory {
+class ViewModelFactory(private val context: Context): ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
 
         if (modelClass.isAssignableFrom(StoryViewModel::class.java)) {
 
             @Suppress("UNCHECKED CAST")
-            return StoryViewModel(Injection.provideRepository(token, context)) as T
+            return StoryViewModel(Injection.provideRepository(context)) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

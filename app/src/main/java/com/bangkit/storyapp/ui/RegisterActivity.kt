@@ -16,7 +16,7 @@ import androidx.core.util.Pair
 import androidx.core.app.ActivityOptionsCompat
 import com.bangkit.storyapp.api.ApiConfig
 import com.bangkit.storyapp.R
-import com.bangkit.storyapp.api.RegisterResponse
+import com.bangkit.storyapp.response.RegisterResponse
 import com.bangkit.storyapp.databinding.ActivityRegisterBinding
 import retrofit2.Call
 import javax.security.auth.callback.Callback

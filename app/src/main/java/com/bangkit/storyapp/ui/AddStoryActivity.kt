@@ -17,12 +17,12 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.bangkit.storyapp.*
-import com.bangkit.storyapp.api.AddStoryResponse
+import com.bangkit.storyapp.response.AddStoryResponse
 import com.bangkit.storyapp.api.ApiConfig
 import com.bangkit.storyapp.databinding.ActivityAddStoryBinding
-import com.bangkit.storyapp.datastore.AppDataStore
-import com.bangkit.storyapp.datastore.AuthViewModel
-import com.bangkit.storyapp.datastore.ViewModelFactory
+import com.bangkit.storyapp.data.AppDataStore
+import com.bangkit.storyapp.data.AuthViewModel
+import com.bangkit.storyapp.data.ViewModelFactory
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -42,6 +42,7 @@ class AddStoryActivity : AppCompatActivity() {
     private var attachFile: File? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityAddStoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
