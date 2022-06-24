@@ -12,4 +12,5 @@
     <string name="user_name">User Name</string>
     <string name="title_activity_maps">MapsActivity</string>
     <string name="locate_user">Locate User</string>
+    <string name="retry">Retry</string>
 </resources>

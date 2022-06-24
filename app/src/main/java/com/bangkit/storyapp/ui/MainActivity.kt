@@ -12,24 +12,39 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.bangkit.storyapp.databinding.ActivityMainBinding
 import androidx.datastore.preferences.core.Preferences
-import androidx.paging.PagingDataAdapter
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bangkit.storyapp.*
-import com.bangkit.storyapp.datastore.AppDataStore
-import com.bangkit.storyapp.datastore.AuthViewModel
-import com.bangkit.storyapp.datastore.ViewModelFactory
+import com.bangkit.storyapp.adapter.LoadingStateAdapter
+import com.bangkit.storyapp.adapter.StoriesAdapter
+import com.bangkit.storyapp.data.AppDataStore
+import com.bangkit.storyapp.data.AuthViewModel
+import com.bangkit.storyapp.data.ViewModelFactory
+import kotlinx.coroutines.launch
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "login")
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
+    private val mainViewModel: StoryViewModel by viewModels {
+        ViewModelFactory(this)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (applicationContext.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            val layoutManager = GridLayoutManager (this, 2)
+            binding.rvStorylist.layoutManager = layoutManager
+        }
+        else {
+            val layoutManager = LinearLayoutManager(this)
+            binding.rvStorylist.layoutManager = layoutManager
+        }
 
         val pref = AppDataStore.getInstance(dataStore)
         val authViewModel = ViewModelProvider(this, ViewModelFactory(pref))[AuthViewModel::class.java]
@@ -39,30 +54,28 @@ class MainActivity : AppCompatActivity() {
             if(token != null) {
                 showLoading(true)
                 val loginToken = "Bearer $token"
-                val mainViewModel: StoryViewModel by viewModels {
-                    ViewModelFactory(loginToken, this@MainActivity)
-                }
-                val adapter = StoryListAdapter()
-                mainViewModel.stories.observe(this) {
-                    adapter.submitData(lifecycle, it)
-                }
-                binding.rvStorylist.adapter = adapter
+                getAllStories(loginToken)
                 showLoading(false)
             }
-
             else {
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
             }
         }
+    }
 
-        if (applicationContext.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            val layoutManager = GridLayoutManager (this, 2)
-            binding.rvStorylist.layoutManager = layoutManager
-        }
-        else {
-            val layoutManager = LinearLayoutManager(this)
-            binding.rvStorylist.layoutManager = layoutManager
+    private fun getAllStories(loginToken: String) {
+
+        val adapter = StoriesAdapter()
+        binding.rvStorylist.adapter = adapter.withLoadStateFooter(
+            footer = LoadingStateAdapter {
+                adapter.retry()
+            }
+        )
+        lifecycleScope.launch {
+            mainViewModel.stories(loginToken).observe(this@MainActivity) {
+                adapter.submitData(lifecycle, it)
+            }
         }
     }
 
@@ -102,7 +115,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     companion object {
-
         const val TOKEN = "token"
     }
 
