@@ -1,4 +1,4 @@
-package com.bangkit.storyapp.ui
+package com.bangkit.storyapp.adapter
 
 import android.app.Activity
 import android.content.Intent
@@ -9,15 +9,18 @@ import androidx.core.util.Pair
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bangkit.storyapp.ListStoryItem
 import com.bangkit.storyapp.databinding.ItemStoryListBinding
+import com.bangkit.storyapp.ui.DetailActivity
+import com.bangkit.storyapp.response.StoryListResponseItem
 import com.bumptech.glide.Glide
 
-class StoryListAdapter: PagingDataAdapter<ListStoryItem, StoryListAdapter.ListViewHolder>(DIFF_CALLBACK) {
+class StoriesAdapter: PagingDataAdapter<StoryListResponseItem, StoriesAdapter.ListViewHolder>(
+    DIFF_CALLBACK
+) {
 
-    class ListViewHolder(private var binding: ItemStoryListBinding): RecyclerView.ViewHolder(binding.root){
+    class ListViewHolder(private var binding: ItemStoryListBinding): RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(data: ListStoryItem) {
+        fun bind(data: StoryListResponseItem) {
 
             with(binding) {
                 Glide.with(imagePhoto.context)
@@ -57,15 +60,18 @@ class StoryListAdapter: PagingDataAdapter<ListStoryItem, StoryListAdapter.ListVi
     }
 
     companion object {
-        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ListStoryItem>() {
-
-            override fun areContentsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem): Boolean {
-                return oldItem.id == newItem.id
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<StoryListResponseItem>() {
+            override fun areContentsTheSame(
+                oldItem: StoryListResponseItem,
+                newItem: StoryListResponseItem
+            ): Boolean {
+                return oldItem == newItem
             }
 
-            override fun areItemsTheSame(oldItem: ListStoryItem, newItem: ListStoryItem): Boolean {
+            override fun areItemsTheSame(oldItem: StoryListResponseItem, newItem: StoryListResponseItem): Boolean {
                 return oldItem == newItem
             }
         }
     }
+
 }

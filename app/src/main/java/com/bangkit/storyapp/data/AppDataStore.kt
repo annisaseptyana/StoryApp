@@ -1,4 +1,4 @@
-package com.bangkit.storyapp.datastore
+package com.bangkit.storyapp.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.stringPreferencesKey

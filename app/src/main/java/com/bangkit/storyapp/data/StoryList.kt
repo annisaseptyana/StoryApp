@@ -1,4 +1,4 @@
-package com.bangkit.storyapp.ui
+package com.bangkit.storyapp.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

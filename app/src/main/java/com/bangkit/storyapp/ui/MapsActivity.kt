@@ -1,4 +1,4 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.ui
 
 import android.Manifest
 import android.content.ContentValues.TAG
@@ -8,14 +8,15 @@ import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.Menu
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModelProvider
+import com.bangkit.storyapp.R
 import com.bangkit.storyapp.api.ApiConfig
+import com.bangkit.storyapp.response.StoryListResponse
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -24,10 +25,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.bangkit.storyapp.databinding.ActivityMapsBinding
-import com.bangkit.storyapp.datastore.AppDataStore
-import com.bangkit.storyapp.datastore.AuthViewModel
-import com.bangkit.storyapp.datastore.ViewModelFactory
-import com.bangkit.storyapp.ui.StoryList
+import com.bangkit.storyapp.data.AppDataStore
+import com.bangkit.storyapp.data.AuthViewModel
+import com.bangkit.storyapp.data.ViewModelFactory
+import com.bangkit.storyapp.data.StoryList
+import com.bangkit.storyapp.response.StoryListResponseItem
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
 import retrofit2.Call
@@ -87,7 +89,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         })
     }
 
-    private fun getStory(listStory: List<ListStoryItem>) {
+    private fun getStory(listStory: List<StoryListResponseItem>) {
 
         val storyList = ArrayList<StoryList>()
 

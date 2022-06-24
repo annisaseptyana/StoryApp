@@ -1,11 +1,13 @@
-package com.bangkit.storyapp
+package com.bangkit.storyapp.response
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 data class StoryListResponse(
 
 	@field:SerializedName("listStory")
-	val listStory: List<ListStoryItem>,
+	val listStory: List<StoryListResponseItem>,
 
 	@field:SerializedName("error")
 	val error: Boolean,
@@ -14,7 +16,8 @@ data class StoryListResponse(
 	val message: String
 )
 
-data class ListStoryItem(
+@Entity(tableName = "story")
+data class StoryListResponseItem (
 
 	@field:SerializedName("photoUrl")
 	val photoUrl: String,
@@ -29,11 +32,12 @@ data class ListStoryItem(
 	val description: String,
 
 	@field:SerializedName("lon")
-	val lon: Double,
+	val lon: Double? = null,
 
+	@PrimaryKey
 	@field:SerializedName("id")
 	val id: String,
 
 	@field:SerializedName("lat")
-	val lat: Double
+	val lat: Double? = null
 )

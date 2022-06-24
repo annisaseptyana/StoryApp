@@ -1,4 +1,4 @@
-package com.bangkit.storyapp.api
+package com.bangkit.storyapp.response
 
 import com.google.gson.annotations.SerializedName
 
